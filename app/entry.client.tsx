@@ -5,14 +5,10 @@
  */
 
 import { RemixBrowser } from "@remix-run/react";
-import { startTransition, StrictMode } from "react";
+import { startTransition } from "react";
 import { hydrateRoot } from "react-dom/client";
 
+// note that strict mode here will cause problems with the setState callback in handleFactChunk so it has bee nremoved
 startTransition(() => {
-  hydrateRoot(
-    document,
-    <StrictMode>
-      <RemixBrowser />
-    </StrictMode>
-  );
+  hydrateRoot(document, <RemixBrowser />);
 });

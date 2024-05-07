@@ -1,3 +1,9 @@
+/**
+ * This code is derived from from https://www.npmjs.com/package/remix-utils
+ * That package requires a bunch of other dependencies that we don't need so it's
+ * easier to just port the code
+ */
+
 interface SendFunctionArgs {
   /**
    * @default "message"
@@ -6,15 +12,15 @@ interface SendFunctionArgs {
   data: string;
 }
 
-export interface SendFunction {
+interface SendFunction {
   (args: SendFunctionArgs): void;
 }
 
-export interface CleanupFunction {
+interface CleanupFunction {
   (): void;
 }
 
-export interface AbortFunction {
+interface AbortFunction {
   (): void;
 }
 
@@ -37,7 +43,7 @@ export function eventStream(
     start(controller) {
       const encoder = new TextEncoder();
 
-      function send({ event, data }: SendFunctionArgs) {
+      function send({ event = "message", data }: SendFunctionArgs) {
         controller.enqueue(encoder.encode(`event: ${event}\n`));
         controller.enqueue(encoder.encode(`data: ${data}\n\n`));
       }
@@ -61,6 +67,7 @@ export function eventStream(
   });
 
   const headers = new Headers(options.headers);
+
   headers.set("Content-Type", "text/event-stream");
   headers.set("Cache-Control", "no-cache");
   headers.set("Connection", "keep-alive");

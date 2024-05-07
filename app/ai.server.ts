@@ -1,13 +1,12 @@
 import OpenAI from "openai";
-import type { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const SYSTEM_PROMPT = `
+const LIST_FACT_SYSTEM_PROMPT = `
 List facts about the input the user provides.
-Provide up to 10 facts.
+Provide up to 8 facts.
 Each fact should be structured as a list with each item prepended with a "*"
 
 
@@ -21,8 +20,6 @@ User: "Tom Brady"
 * He was named to the Pro Bowl 15 times throughout his career.
 * Tom Brady has thrown for over 84,000 passing yards, which is one of the highest totals in NFL history.
 * He is known for his strict diet and fitness regimen, which he credits for his longevity in the league.
-* Brady announced his retirement on February 1, 2022, only to reverse his decision 40 days later and return for another season.
-* He finally retired "for good" from professional football on February 1, 2023, exactly one year after his initial retirement announcement.
 
 Example 2:
 User: "Kent Dodds"
@@ -30,7 +27,6 @@ User: "Kent Dodds"
 * He is highly regarded for his educational content, including articles, videos, and courses on modern JavaScript, React, and testing. His materials are widely used by developers to improve their skills.
 * Kent is the creator of the testing library called "Testing Library," which is used to write tests for JavaScript and React applications in a way that encourages good testing practices.
 * He previously worked at PayPal as a full-time JavaScript engineer, where he focused on building and maintaining scalable applications.
-* Kent is a frequent speaker at development conferences and workshops, sharing his expertise and experiences with the developer community around the world.
 
 
 Only use a "*" to start each fact.
@@ -38,22 +34,51 @@ Only use a "*" to start each fact.
 
 export async function generateFactCompletion(text: string) {
   const messages = [
-    { role: "system", content: SYSTEM_PROMPT },
+    { role: "system", content: LIST_FACT_SYSTEM_PROMPT },
     { role: "user", content: text },
   ];
-  return createSimpleCompletion(messages);
+  return createStreamingCompletion(messages);
 }
 
-async function* createSimpleCompletion(
+const FACT_CHECKING_SYSTEM_PROMPT = `
+If the assitant is replying with something like "I'm sorry but the input you provided doesn't contain recongizable information", return "NO" otherwise return "YES".
+Only respond "NO" if it is clear the assistant doesn't have facts to provide.
+Respond "YES" if the assistant has provided facts, even if they are incorrect.
+`;
+
+export async function checkCompletionIsValid(text: string) {
+  /**
+   * This function is used to check if the completion is valid.
+   * If it's not, we can prompt the user to provide a new input.
+   */
+  const messages = [
+    { role: "system", content: FACT_CHECKING_SYSTEM_PROMPT },
+    { role: "assistant", content: text },
+  ];
+  const completion = await createSimpleCompletion(messages);
+  return completion !== "NO";
+}
+
+async function* createStreamingCompletion(
   messages: Array<{ role: string; content: string }>
 ) {
   const stream = await openai.chat.completions.create({
     model: "gpt-3.5-turbo-0125",
-    messages: messages as ChatCompletionMessageParam[],
+    messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
     stream: true,
   });
   for await (const part of stream) {
     const delta = part.choices[0]?.delta?.content || "";
     yield delta;
   }
+}
+
+async function createSimpleCompletion(
+  messages: Array<{ role: string; content: string }>
+) {
+  const output = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo-0125",
+    messages: messages as OpenAI.Chat.ChatCompletionMessageParam[],
+  });
+  return output.choices[0]?.message.content || "";
 }
