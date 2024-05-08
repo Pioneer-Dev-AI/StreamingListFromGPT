@@ -118,7 +118,7 @@ export default function Index() {
       }}
     >
       <h1>Streaming List from GPT</h1>
-      <p>Type in anything to learn facts about it</p>
+      <p>Type a topic to learn facts about it</p>
       <form onSubmit={handleFormSubmit} style={{ margin: "20px" }}>
         <input
           type="text"
