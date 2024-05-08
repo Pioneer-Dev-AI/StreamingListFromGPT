@@ -55,6 +55,7 @@ export default function Index() {
           prevFacts[prevFacts.length - 1] += chunkToInsert;
           setIsWaiting(false); // Set isWaiting to true when streaming
         }
+        // trim whitespace at the front and remove newlines
         return prevFacts.map((fact) => fact.trimStart().replace(/\n/g, ""));
       });
     },
@@ -68,9 +69,9 @@ export default function Index() {
     setIsWaiting(true); // Reset isWaiting when form is submitted
 
     const formData = new FormData(event.target as HTMLFormElement);
-    const text = formData.get("text");
+    const topic = formData.get("topic");
 
-    const sse = new EventSource(`/facts/stream?text=${text}`);
+    const sse = new EventSource(`/facts/stream?topic=${topic}`);
 
     sse.addEventListener("message", (event) => {
       const parsedData: Action = JSON.parse(event.data);
@@ -122,7 +123,7 @@ export default function Index() {
       <form onSubmit={handleFormSubmit} style={{ margin: "20px" }}>
         <input
           type="text"
-          name="text"
+          name="topic"
           value={input}
           onChange={handleInputChange}
           style={{ margin: "5px" }}

@@ -6,33 +6,33 @@ import { Action } from "~/types";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
-  const text = url.searchParams.get("text");
+  const topic = url.searchParams.get("topic");
   return eventStream(request.signal, function setup(send) {
     const sendMessage = (payload: Action) => {
       send({ event: "message", data: JSON.stringify(payload) });
     };
-    if (!text) {
-      // Send an error message if the text parameter is missing
+    if (!topic) {
+      // Send an error message if the topic parameter is missing
       sendMessage({
         action: "error",
-        message: "Missing text parameter",
+        message: "Missing topic parameter",
       });
       return () => {};
     }
-    generateFacts({ sendMessage, text });
+    generateFacts({ sendMessage, topic });
     return function clear() {};
   });
 }
 
 async function generateFacts({
   sendMessage,
-  text,
+  topic,
 }: {
   sendMessage: (payload: Action) => void;
-  text: string;
+  topic: string;
 }) {
   try {
-    const factGenerator = generateFactCompletion(text);
+    const factGenerator = generateFactCompletion(topic);
     let rawText = "";
     for await (const chunk of await factGenerator) {
       rawText += chunk;

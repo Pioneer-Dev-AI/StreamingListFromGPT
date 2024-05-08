@@ -32,10 +32,10 @@ User: "Kent Dodds"
 Only use a "*" to start each fact.
   `;
 
-export async function generateFactCompletion(text: string) {
+export async function generateFactCompletion(topic: string) {
   const messages = [
     { role: "system", content: LIST_FACT_SYSTEM_PROMPT },
-    { role: "user", content: text },
+    { role: "user", content: topic },
   ];
   return createStreamingCompletion(messages);
 }
