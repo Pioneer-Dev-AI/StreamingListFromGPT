@@ -2,13 +2,15 @@ import { type LoaderFunctionArgs } from "@remix-run/node";
 import { eventStream } from "~/event-stream.server";
 
 import { generateFactCompletion, checkCompletionIsValid } from "~/ai.server";
+import { Action } from "~/types";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const text = url.searchParams.get("text");
   return eventStream(request.signal, function setup(send) {
-    const sendMessage = (payload: object) =>
+    const sendMessage = (payload: Action) => {
       send({ event: "message", data: JSON.stringify(payload) });
+    };
     if (!text) {
       // Send an error message if the text parameter is missing
       sendMessage({
@@ -26,7 +28,7 @@ async function generateFacts({
   sendMessage,
   text,
 }: {
-  sendMessage: (payload: object) => void;
+  sendMessage: (payload: Action) => void;
   text: string;
 }) {
   try {
@@ -39,9 +41,13 @@ async function generateFacts({
         chunk,
       });
     }
-
-    // Check if the completion is valid using GPT before we finish
-    // if invalid, throw an error
+    
+    /*
+    Check if the completion is valid using GPT before we finish.
+    If invalid, throw an error.
+    We use another prompt/GPT call here because if we put that logic in the generateFactCompletion prompt,
+    it biases the GPT too often and causes it to give up too easily.
+    */
     const isValid = await checkCompletionIsValid(rawText);
     if (!isValid) {
       sendMessage({
