@@ -1,7 +1,7 @@
 import { type LoaderFunctionArgs } from "@remix-run/node";
 import { eventStream } from "~/event-stream.server";
 
-import { generateFactCompletion, checkCompletionIsValid } from "~/ai.server";
+import { generateFactCompletion, checkCompletionIsValid } from "~/gpt.server";
 import { Action } from "~/types";
 
 export async function loader({ request }: LoaderFunctionArgs) {
