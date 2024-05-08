@@ -55,7 +55,7 @@ export default function Index() {
           prevFacts[prevFacts.length - 1] += chunkToInsert;
           setIsWaiting(false); // Set isWaiting to true when streaming
         }
-        return prevFacts.map((fact) => fact.trimStart());
+        return prevFacts.map((fact) => fact.trimStart().replace(/\n/g, ""));
       });
     },
     [setFacts]
