@@ -1,7 +1,18 @@
-# Welcome to Remix + Vite!
+# Welcome to Streaming List from GPT App
 
-📖 See the [Remix docs](https://remix.run/docs) and the [Remix Vite docs](https://remix.run/docs/en/main/guides/vite) for details on supported features.
+This application allows users to generate and edit a list of facts based on a user-provided topic, leveraging OpenAI's language model and streaming the response back to the client.
 
+📖 For more information on the underlying technologies, see the [Remix docs](https://remix.run/docs) and the [Remix Vite docs](https://remix.run/docs/en/main/guides/vite).
+
+## Setup
+
+Before development or deployment, make sure to set up your environment variables:
+
+1. Copy the `.env.example` file to `.env`:
+   ```shell
+   cp .env.example .env
+   ```
+2. Obtain an API key from OpenAI and paste it into the `.env` file. For more details on getting an API key, visit the [OpenAI documentation](https://beta.openai.com/docs/).
 ## Development
 
 Run the Vite dev server:
@@ -25,12 +36,3 @@ npm start
 ```
 
 Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-- `build/server`
-- `build/client`
