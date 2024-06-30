@@ -17,7 +17,11 @@ type Action =
 export const meta: MetaFunction = () => {
   return [
     { title: "Remix Streaming Lists from GPT" },
-    { name: "description", content: "A demo showing how to implement streaming data and create a structured list using GPT 3.5 completions" },
+    {
+      name: "description",
+      content:
+        "A demo showing how to implement streaming data and create a structured list using GPT 3.5 completions",
+    },
   ];
 };
 
@@ -118,7 +122,7 @@ export default function Index() {
         margin: "0 auto",
       }}
     >
-      <h1>Streaming List from GPT</h1>
+      <h1 className="font-bold">Streaming List from GPT</h1>
       <p>Type a topic to learn facts about it</p>
       <form onSubmit={handleFormSubmit} style={{ margin: "20px" }}>
         <input
