@@ -24,4 +24,35 @@ main {
   .get-button:hover {
     background: linear-gradient(180deg, #21005d 0%, #371be3 100%);
   }
+
+  .fact-item-border {
+    background: radial-gradient(
+        90.16% 143.01% at 15.32% 21.04%,
+        rgba(165, 239, 255, 0.2) 0%,
+        rgba(110, 191, 244, 0.0447917) 77.08%,
+        rgba(70, 144, 213, 0) 100%
+      )
+      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+    background-blend-mode: overlay, normal;
+    backdrop-filter: blur(40px);
+    /* Note: backdrop-filter has minimal browser support */
+    border-radius: 12px;
+  }
+
+  @keyframes flip {
+    from {
+      transform: rotateX(0deg);
+    }
+    to {
+      transform: rotateX(360deg);
+    }
+  }
+
+  .fact-item {
+    animation: flip 0.5s forwards;
+  }
+
+  .fact-item-border {
+    transition: opacity 0.5s;
+  }
 }

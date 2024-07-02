@@ -13,7 +13,7 @@ const FactInput: React.FC<FactInputProps> = ({
 }) => (
   <form
     onSubmit={handleFormSubmit}
-    className="absolute bottom-10 flex justify-center w-full p-1 gap-2"
+    className="flex justify-center w-full p-1 gap-2"
   >
     <input
       type="text"

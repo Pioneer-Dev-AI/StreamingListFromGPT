@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import FactInput from "~/components/FactInput";
 import FactList from "~/components/FactList";
@@ -8,7 +8,8 @@ import HeroTitle from "~/components/HeroTitle";
 import ManOnRocket from "~/assets/ManOnRocket.svg";
 
 import useFactStream from "~/hooks/useFactStream";
-import { adjustHeight } from "~/utils/adjustHeight";
+import FactError from "~/components/FactError";
+import FactLoading from "~/components/FactLoading";
 
 export const meta: MetaFunction = () => {
   return [
@@ -34,39 +35,26 @@ export default function Index() {
     startStreaming(input);
   };
 
-  useEffect(() => {
-    facts.forEach((fact, index) => {
-      const element = document.getElementById(`textarea-${index}`);
-      if (element) {
-        adjustHeight(element as HTMLTextAreaElement);
-      }
-    });
-  }, [facts]);
-
   return (
     <main className="h-full">
       <HeaderNav />
       <HeroTitle />
 
-      <div className="flex items-center justify-center">
-        <img
-          src={ManOnRocket}
-          alt="Man_on_Rocket"
-          className="mix-blend-hard-light h-[350px] w-[250px] animate-rocket-move"
-        />
-      </div>
-
       {error ? (
-        <div style={{ color: "red", margin: "5px" }}>{error}</div>
+        <FactError error={error} />
       ) : isWaiting ? (
-        <div>Loading facts...</div>
+        <FactLoading />
       ) : facts.length > 0 ? (
-        <FactList
-          facts={facts}
-          setFacts={setFacts}
-          adjustHeight={adjustHeight}
-        />
-      ) : null}
+        <FactList facts={facts} setFacts={setFacts} input={input} />
+      ) : (
+        <div className="flex items-center justify-center">
+          <img
+            src={ManOnRocket}
+            alt="Man_on_Rocket"
+            className="mix-blend-hard-light h-[350px] w-[250px] animate-rocket-move"
+          />
+        </div>
+      )}
 
       <FactInput
         input={input}
